@@ -14,6 +14,16 @@ const apiBaseUrl = codespaceName
   : 'http://localhost:8000';
 
 app.use(express.json());
+app.use((_request, response, next) => {
+  response.setHeader('Access-Control-Allow-Origin', '*');
+  response.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
+
+app.options('/api/{*resource}', (_request, response) => {
+  response.sendStatus(204);
+});
 
 app.get('/api/health', (_request, response) => {
   response.json({ status: 'ok', apiBaseUrl });
