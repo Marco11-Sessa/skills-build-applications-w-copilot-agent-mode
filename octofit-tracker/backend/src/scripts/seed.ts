@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { Activity } from '../models/Activity.js';
-import { LeaderboardEntry } from '../models/LeaderboardEntry.js';
+import { Leaderboard } from '../models/Leaderboard.js';
 import { Team } from '../models/Team.js';
 import { User } from '../models/User.js';
 import { Workout } from '../models/Workout.js';
@@ -21,7 +21,7 @@ async function seedDatabase() {
       User.deleteMany({}),
       Team.deleteMany({}),
       Activity.deleteMany({}),
-      LeaderboardEntry.deleteMany({}),
+      Leaderboard.deleteMany({}),
       Workout.deleteMany({}),
     ]);
 
@@ -43,7 +43,7 @@ async function seedDatabase() {
       { user: 'Jordan Patel', type: 'Running', durationMinutes: 38, caloriesBurned: 410, activityDate: new Date('2026-10-03') },
     ]);
 
-    await LeaderboardEntry.insertMany([
+    await Leaderboard.insertMany([
       { rank: 1, user: 'Avery Johnson', team: 'Velocity Vipers', points: 1280 },
       { rank: 2, user: 'Jordan Patel', team: 'Harbor Hustlers', points: 1195 },
       { rank: 3, user: 'Sam Rivera', team: 'Summit Sprinters', points: 1110 },
