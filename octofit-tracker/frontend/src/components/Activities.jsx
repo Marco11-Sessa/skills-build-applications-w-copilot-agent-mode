@@ -37,7 +37,7 @@ export default function Activities() {
         <h2>Recent movement</h2>
       </div>
       {isLoading && <p className="status-text">Loading activities...</p>}
-      {error && <p className="alert alert-danger">{error}</p>}
+      {error && <p className="alert alert-danger" role="alert">{error}</p>}
       {!isLoading && !error && (
         <div className="table-responsive">
           <table className="table align-middle">
