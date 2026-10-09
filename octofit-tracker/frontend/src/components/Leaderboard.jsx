@@ -37,7 +37,7 @@ export default function Leaderboard() {
         <h2>Competitive standings</h2>
       </div>
       {isLoading && <p className="status-text">Loading leaderboard...</p>}
-      {error && <p className="alert alert-danger">{error}</p>}
+      {error && <p className="alert alert-danger" role="alert">{error}</p>}
       {!isLoading && !error && (
         <div className="standings-list">
           {leaderboard.map((entry) => (
