@@ -37,7 +37,7 @@ export default function Teams() {
         <h2>Training groups</h2>
       </div>
       {isLoading && <p className="status-text">Loading teams...</p>}
-      {error && <p className="alert alert-danger">{error}</p>}
+      {error && <p className="alert alert-danger" role="alert">{error}</p>}
       {!isLoading && !error && (
         <div className="resource-grid">
           {teams.map((team) => (
