@@ -37,7 +37,7 @@ export default function Users() {
         <h2>Member profiles</h2>
       </div>
       {isLoading && <p className="status-text">Loading users...</p>}
-      {error && <p className="alert alert-danger">{error}</p>}
+      {error && <p className="alert alert-danger" role="alert">{error}</p>}
       {!isLoading && !error && (
         <div className="resource-grid">
           {users.map((user) => (
