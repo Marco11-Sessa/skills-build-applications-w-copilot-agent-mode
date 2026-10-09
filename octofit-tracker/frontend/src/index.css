@@ -1,0 +1,17 @@
+:root {
+  font: 16px/1.5 Avenir, Montserrat, Corbel, 'Segoe UI', sans-serif;
+  color: #203026;
+  background: #f7f4ec;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100svh;
+}
