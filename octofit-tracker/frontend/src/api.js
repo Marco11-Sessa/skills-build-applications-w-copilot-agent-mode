@@ -51,7 +51,7 @@ export function formatValue(value) {
   }
 
   if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
-    return new Date(value).toLocaleDateString()
+    return new Date(value).toLocaleDateString(undefined, { timeZone: 'UTC' })
   }
 
   return value ?? 'Not set'
