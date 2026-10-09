@@ -37,7 +37,7 @@ export default function Workouts() {
         <h2>Suggested sessions</h2>
       </div>
       {isLoading && <p className="status-text">Loading workouts...</p>}
-      {error && <p className="alert alert-danger">{error}</p>}
+      {error && <p className="alert alert-danger" role="alert">{error}</p>}
       {!isLoading && !error && (
         <div className="resource-grid">
           {workouts.map((workout) => (
