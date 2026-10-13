@@ -9,6 +9,31 @@ import { validateExercise } from '../.github/scripts/validate-exercise.mjs';
 
 const repositoryRoot = path.resolve(import.meta.dirname, '..');
 
+test('Copilot setup caches the lockfiles for both application tiers', () => {
+  const workflow = fs.readFileSync(path.join(repositoryRoot, '.github/workflows/copilot-setup-steps.yml'), 'utf8');
+  const cachePaths = workflow.match(/cache-dependency-path: \|\n((?: +octofit-tracker\/.*\n)+)/)?.[1]
+    .trim().split('\n').map((line) => line.trim());
+  assert.deepEqual(cachePaths, [
+    'octofit-tracker/backend/package-lock.json',
+    'octofit-tracker/frontend/package-lock.json',
+  ]);
+  for (const lockfile of cachePaths) {
+    assert.ok(fs.existsSync(path.join(repositoryRoot, lockfile)));
+  }
+});
+
+test('Copilot setup installs dependencies in both application tiers instead of the repository root', () => {
+  const workflow = fs.readFileSync(path.join(repositoryRoot, '.github/workflows/copilot-setup-steps.yml'), 'utf8');
+  const commands = [...workflow.matchAll(/^\s*(?:run:\s*)?(npm ci[^\n]*)/gm)].map((match) => match[1]);
+  assert.deepEqual(commands, [
+    'npm ci --prefix "$GITHUB_WORKSPACE/octofit-tracker/backend"',
+    'npm ci --prefix "$GITHUB_WORKSPACE/octofit-tracker/frontend"',
+  ]);
+  for (const tier of ['backend', 'frontend']) {
+    assert.ok(fs.existsSync(path.join(repositoryRoot, 'octofit-tracker', tier, 'package.json')));
+  }
+});
+
 function temporaryDirectory() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'skills-exercise-validation-'));
 }
@@ -177,9 +202,11 @@ test('a closed but unmerged pull request cannot complete the exercise', () => {
   assert.throws(() => validateExercise(root), /require a merged pull request/);
 });
 
-test('the starter template cannot pass Step 2 before learner setup', () => {
+test('the starter template cannot pass Step 2 before learner setup', (t) => {
+  const root = temporaryDirectory();
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   for (const checkName of ['step2-react', 'step2-express', 'step2-mongoose']) {
-    assert.throws(() => checks[checkName](repositoryRoot), /Missing required file/);
+    assert.throws(() => checks[checkName](root), /Missing required file/);
   }
 });
 
