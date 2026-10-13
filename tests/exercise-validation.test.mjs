@@ -9,6 +9,31 @@ import { validateExercise } from '../.github/scripts/validate-exercise.mjs';
 
 const repositoryRoot = path.resolve(import.meta.dirname, '..');
 
+test('Copilot setup caches the lockfiles for both application tiers', () => {
+  const workflow = fs.readFileSync(path.join(repositoryRoot, '.github/workflows/copilot-setup-steps.yml'), 'utf8');
+  const cachePaths = workflow.match(/cache-dependency-path: \|\n((?: +octofit-tracker\/.*\n)+)/)?.[1]
+    .trim().split('\n').map((line) => line.trim());
+  assert.deepEqual(cachePaths, [
+    'octofit-tracker/backend/package-lock.json',
+    'octofit-tracker/frontend/package-lock.json',
+  ]);
+  for (const lockfile of cachePaths) {
+    assert.ok(fs.existsSync(path.join(repositoryRoot, lockfile)));
+  }
+});
+
+test('Copilot setup installs dependencies in both application tiers instead of the repository root', () => {
+  const workflow = fs.readFileSync(path.join(repositoryRoot, '.github/workflows/copilot-setup-steps.yml'), 'utf8');
+  const commands = [...workflow.matchAll(/^\s*(?:run:\s*)?(npm ci[^\n]*)/gm)].map((match) => match[1]);
+  assert.deepEqual(commands, [
+    'npm ci --prefix "$GITHUB_WORKSPACE/octofit-tracker/backend"',
+    'npm ci --prefix "$GITHUB_WORKSPACE/octofit-tracker/frontend"',
+  ]);
+  for (const tier of ['backend', 'frontend']) {
+    assert.ok(fs.existsSync(path.join(repositoryRoot, 'octofit-tracker', tier, 'package.json')));
+  }
+});
+
 function temporaryDirectory() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'skills-exercise-validation-'));
 }
